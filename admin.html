@@ -9,16 +9,53 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
     <style>
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        .sortable-ghost { opacity: 0.35; background: #e0e7ff !important; border: 2px dashed #6366f1 !important; }
-        .drag-handle-group, .drag-handle-item { cursor: grab; }
-        .drag-handle-group:active, .drag-handle-item:active { cursor: grabbing; }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        .nested-dropzone { min-height: 56px !important; }
-        .empty-hint { pointer-events: none !important; user-select: none !important; }
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+
+        .sortable-ghost {
+            opacity: 0.35;
+            background: #e0e7ff !important;
+            border: 2px dashed #6366f1 !important;
+        }
+
+        .drag-handle-group,
+        .drag-handle-item {
+            cursor: grab;
+        }
+
+        .drag-handle-group:active,
+        .drag-handle-item:active {
+            cursor: grabbing;
+        }
+
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .nested-dropzone {
+            min-height: 56px !important;
+        }
+
+        .empty-hint {
+            pointer-events: none !important;
+            user-select: none !important;
+        }
     </style>
 </head>
 
@@ -34,21 +71,28 @@
             <div class="text-xs bg-purple-100 text-purple-700 px-3 py-1.5 rounded-full font-semibold">
                 <i class="fa-solid fa-bolt mr-1"></i> Pro Plan
             </div>
-            <button onclick="handleLogout()" id="btn-logout" class="hidden text-xs text-red-500 font-medium hover:underline">Đăng xuất</button>
+            <button onclick="handleLogout()" id="btn-logout"
+                class="hidden text-xs text-red-500 font-medium hover:underline">Đăng xuất</button>
         </div>
     </header>
 
     <!-- MÀN HÌNH ĐĂNG NHẬP -->
-    <div id="login-screen" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div id="login-screen"
+        class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-sm text-center">
-            <div class="w-12 h-12 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center mx-auto mb-4 text-xl">
+            <div
+                class="w-12 h-12 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center mx-auto mb-4 text-xl">
                 <i class="fa-solid fa-lock"></i>
             </div>
             <h2 class="text-xl font-bold mb-1">Đăng nhập Admin</h2>
             <p class="text-xs text-gray-400 mb-6">Quản lý giao diện Bio của bạn</p>
-            <input type="email" id="login-email" placeholder="Email Admin" class="w-full p-3 mb-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-purple-600">
-            <input type="password" id="login-pass" placeholder="Mật khẩu" class="w-full p-3 mb-4 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-purple-600">
-            <button onclick="handleLogin()" class="w-full bg-[#8a2be2] hover:bg-purple-700 text-white font-bold py-3 rounded-xl text-sm shadow-lg transition">Đăng Nhập</button>
+            <input type="email" id="login-email" placeholder="Email Admin"
+                class="w-full p-3 mb-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-purple-600">
+            <input type="password" id="login-pass" placeholder="Mật khẩu"
+                class="w-full p-3 mb-4 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-purple-600">
+            <button onclick="handleLogin()"
+                class="w-full bg-[#8a2be2] hover:bg-purple-700 text-white font-bold py-3 rounded-xl text-sm shadow-lg transition">Đăng
+                Nhập</button>
         </div>
     </div>
 
@@ -56,10 +100,13 @@
     <div class="flex-1 flex overflow-hidden">
 
         <!-- SIDEBAR TRÁI -->
-        <aside class="w-60 bg-white border-r border-gray-200 p-4 flex flex-col justify-between hidden md:flex flex-shrink-0">
+        <aside
+            class="w-60 bg-white border-r border-gray-200 p-4 flex flex-col justify-between hidden md:flex flex-shrink-0">
             <div class="space-y-6">
                 <div class="flex items-center gap-3 p-2 bg-gray-50 rounded-xl">
-                    <img id="admin-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=128&auto=format&fit=crop" class="w-10 h-10 rounded-full object-cover">
+                    <img id="admin-avatar"
+                        src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=128&auto=format&fit=crop"
+                        class="w-10 h-10 rounded-full object-cover">
                     <div class="truncate">
                         <h4 id="admin-display-name" class="font-bold text-xs truncate">LHAnh</h4>
                         <span class="text-[10px] text-gray-400">linktr.ee/lhanh</span>
@@ -68,13 +115,16 @@
 
                 <!-- MENU TABS CHUYỂN LINKS VÀ DESIGN -->
                 <nav class="space-y-1">
-                    <button onclick="switchTab('links')" id="tab-btn-links" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl bg-purple-50 text-purple-700 font-semibold text-xs transition">
+                    <button onclick="switchTab('links')" id="tab-btn-links"
+                        class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl bg-purple-50 text-purple-700 font-semibold text-xs transition">
                         <i class="fa-solid fa-list text-[#8a2be2]"></i> Links
                     </button>
-                    <button onclick="switchTab('design')" id="tab-btn-design" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-500 hover:bg-gray-50 font-medium text-xs transition">
+                    <button onclick="switchTab('design')" id="tab-btn-design"
+                        class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-500 hover:bg-gray-50 font-medium text-xs transition">
                         <i class="fa-solid fa-palette"></i> Design (Themes)
                     </button>
-                    <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-500 hover:bg-gray-50 font-medium text-xs">
+                    <a href="#"
+                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-500 hover:bg-gray-50 font-medium text-xs">
                         <i class="fa-solid fa-chart-line"></i> Analytics
                     </a>
                 </nav>
@@ -88,54 +138,79 @@
                 <!-- 1. TAB LINKS (Quản lý Link & Layout) -->
                 <div id="view-links" class="space-y-6">
                     <!-- PROFILE HEADER -->
-                    <div class="flex items-center gap-5 px-2 py-3 bg-white rounded-3xl p-4 border border-gray-200/70 shadow-sm">
+                    <div
+                        class="flex items-center gap-5 px-2 py-3 bg-white rounded-3xl p-4 border border-gray-200/70 shadow-sm">
                         <div class="relative group cursor-pointer" onclick="changeAvatar()">
-                            <img id="main-profile-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=128&auto=format&fit=crop" class="w-16 h-16 rounded-full object-cover shadow border border-gray-200">
-                            <div class="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition text-white text-xs font-semibold">
+                            <img id="main-profile-avatar"
+                                src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=128&auto=format&fit=crop"
+                                class="w-16 h-16 rounded-full object-cover shadow border border-gray-200">
+                            <div
+                                class="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition text-white text-xs font-semibold">
                                 <i class="fa-solid fa-camera"></i>
                             </div>
                         </div>
 
                         <div class="flex-1 space-y-1">
-                            <input type="text" id="main-profile-name" onchange="updateProfileName(this.value)" value="🍀LHAnh🍀" class="font-bold text-base text-neutral-900 border-b border-transparent hover:border-gray-300 focus:border-black focus:outline-none bg-transparent w-full">
-                            <input type="text" id="main-profile-desc" onchange="updateProfileDesc(this.value)" placeholder="Add bio" value="" class="text-xs text-gray-400 font-medium border-b border-transparent hover:border-gray-300 focus:border-black focus:outline-none bg-transparent w-full placeholder-gray-400">
+                            <input type="text" id="main-profile-name" onchange="updateProfileName(this.value)"
+                                value="🍀LHAnh🍀"
+                                class="font-bold text-base text-neutral-900 border-b border-transparent hover:border-gray-300 focus:border-black focus:outline-none bg-transparent w-full">
+                            <input type="text" id="main-profile-desc" onchange="updateProfileDesc(this.value)"
+                                placeholder="Add bio" value=""
+                                class="text-xs text-gray-400 font-medium border-b border-transparent hover:border-gray-300 focus:border-black focus:outline-none bg-transparent w-full placeholder-gray-400">
 
                             <!-- Social Icons -->
                             <div class="flex items-center gap-2 pt-1" id="social-icons-bar">
                                 <div class="relative group cursor-pointer" onclick="editSocial('instagram')">
-                                    <div class="w-6 h-6 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center text-gray-600 hover:text-pink-600 shadow-sm text-[10px]"><i class="fa-brands fa-instagram"></i></div>
+                                    <div
+                                        class="w-6 h-6 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center text-gray-600 hover:text-pink-600 shadow-sm text-[10px]">
+                                        <i class="fa-brands fa-instagram"></i></div>
                                 </div>
                                 <div class="relative group cursor-pointer" onclick="editSocial('tiktok')">
-                                    <div class="w-6 h-6 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center text-gray-600 hover:text-black shadow-sm text-[10px]"><i class="fa-brands fa-tiktok"></i></div>
+                                    <div
+                                        class="w-6 h-6 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center text-gray-600 hover:text-black shadow-sm text-[10px]">
+                                        <i class="fa-brands fa-tiktok"></i></div>
                                 </div>
                                 <div class="relative group cursor-pointer" onclick="editSocial('youtube')">
-                                    <div class="w-6 h-6 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center text-gray-600 hover:text-red-600 shadow-sm text-[10px]"><i class="fa-brands fa-youtube"></i></div>
+                                    <div
+                                        class="w-6 h-6 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center text-gray-600 hover:text-red-600 shadow-sm text-[10px]">
+                                        <i class="fa-brands fa-youtube"></i></div>
                                 </div>
                                 <div class="relative group cursor-pointer" onclick="editSocial('email')">
-                                    <div class="w-6 h-6 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center text-gray-600 hover:text-indigo-600 shadow-sm text-[10px]"><i class="fa-regular fa-envelope"></i></div>
+                                    <div
+                                        class="w-6 h-6 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center text-gray-600 hover:text-indigo-600 shadow-sm text-[10px]">
+                                        <i class="fa-regular fa-envelope"></i></div>
                                 </div>
-                                <button onclick="editSocial('custom')" class="w-6 h-6 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center text-gray-600 text-[10px] shadow-sm transition"><i class="fa-solid fa-plus"></i></button>
+                                <button onclick="editSocial('custom')"
+                                    class="w-6 h-6 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center text-gray-600 text-[10px] shadow-sm transition"><i
+                                        class="fa-solid fa-plus"></i></button>
                             </div>
                         </div>
                     </div>
 
                     <!-- Nút thao tác -->
                     <div class="grid grid-cols-2 gap-3">
-                        <button onclick="toggleAddForm('link')" class="bg-black hover:bg-neutral-800 text-white font-semibold py-3 px-4 rounded-full shadow-md transition flex items-center justify-center gap-2 text-xs">
+                        <button onclick="toggleAddForm('link')"
+                            class="bg-black hover:bg-neutral-800 text-white font-semibold py-3 px-4 rounded-full shadow-md transition flex items-center justify-center gap-2 text-xs">
                             <i class="fa-solid fa-plus"></i> Thêm Link Ngoài
                         </button>
-                        <button onclick="toggleAddForm('group')" class="bg-white border border-gray-300 hover:bg-gray-50 text-neutral-800 font-semibold py-3 px-4 rounded-full shadow-sm transition flex items-center justify-center gap-2 text-xs">
+                        <button onclick="toggleAddForm('group')"
+                            class="bg-white border border-gray-300 hover:bg-gray-50 text-neutral-800 font-semibold py-3 px-4 rounded-full shadow-sm transition flex items-center justify-center gap-2 text-xs">
                             <i class="fa-solid fa-layer-group"></i> Thêm Nhóm (Layout)
                         </button>
                     </div>
 
                     <!-- Form thêm ngoài -->
-                    <div id="add-form" class="bg-white p-5 rounded-3xl border border-gray-200 shadow-sm space-y-3 hidden">
-                        <h4 id="form-type-title" class="font-bold text-xs text-gray-500 uppercase tracking-wider">Thêm mới</h4>
+                    <div id="add-form"
+                        class="bg-white p-5 rounded-3xl border border-gray-200 shadow-sm space-y-3 hidden">
+                        <h4 id="form-type-title" class="font-bold text-xs text-gray-500 uppercase tracking-wider">Thêm
+                            mới</h4>
                         <div id="form-fields" class="space-y-3"></div>
                         <div class="flex gap-2 pt-1">
-                            <button onclick="submitNewItem()" class="flex-1 bg-black hover:bg-neutral-800 text-white py-2.5 rounded-xl text-xs font-bold">Xác nhận</button>
-                            <button onclick="document.getElementById('add-form').classList.add('hidden')" class="px-4 bg-gray-100 text-gray-600 py-2.5 rounded-xl text-xs font-semibold">Hủy</button>
+                            <button onclick="submitNewItem()"
+                                class="flex-1 bg-black hover:bg-neutral-800 text-white py-2.5 rounded-xl text-xs font-bold">Xác
+                                nhận</button>
+                            <button onclick="document.getElementById('add-form').classList.add('hidden')"
+                                class="px-4 bg-gray-100 text-gray-600 py-2.5 rounded-xl text-xs font-semibold">Hủy</button>
                         </div>
                     </div>
 
@@ -150,7 +225,8 @@
                             <h2 class="text-xl font-extrabold text-neutral-900 tracking-tight">Themes</h2>
                             <p class="text-xs text-gray-500 mt-0.5">Chọn phong cách và màu sắc cho trang Bio của bạn</p>
                         </div>
-                        <span class="text-xs font-semibold px-3 py-1 bg-purple-100 text-purple-700 rounded-full">Customizable</span>
+                        <span
+                            class="text-xs font-semibold px-3 py-1 bg-purple-100 text-purple-700 rounded-full">Customizable</span>
                     </div>
 
                     <!-- Grid Thư Viện Theme -->
@@ -161,13 +237,19 @@
         </main>
 
         <!-- RIGHT MOBILE PREVIEW (Tự động thay đổi phong cách theo theme đã chọn) -->
-        <aside class="w-[380px] bg-white border-l border-gray-200 flex flex-col items-center justify-center p-6 hidden lg:flex flex-shrink-0">
-            <div class="w-[280px] h-[560px] bg-slate-900 rounded-[40px] p-3 shadow-2xl border-4 border-slate-800 relative flex flex-col">
-                <div class="w-24 h-4 bg-slate-800 rounded-b-xl mx-auto absolute top-3 left-1/2 -translate-x-1/2 z-20"></div>
+        <aside
+            class="w-[380px] bg-white border-l border-gray-200 flex flex-col items-center justify-center p-6 hidden lg:flex flex-shrink-0">
+            <div
+                class="w-[280px] h-[560px] bg-slate-900 rounded-[40px] p-3 shadow-2xl border-4 border-slate-800 relative flex flex-col">
+                <div class="w-24 h-4 bg-slate-800 rounded-b-xl mx-auto absolute top-3 left-1/2 -translate-x-1/2 z-20">
+                </div>
 
                 <!-- Khung điện thoại áp dụng Theme -->
-                <div id="phone-preview-screen" class="w-full h-full rounded-[30px] overflow-y-auto p-4 flex flex-col items-center pt-8 relative no-scrollbar transition duration-300">
-                    <img id="preview-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=128&auto=format&fit=crop" class="w-16 h-16 rounded-full object-cover border-2 border-white shadow-md mb-2">
+                <div id="phone-preview-screen"
+                    class="w-full h-full rounded-[30px] overflow-y-auto p-4 flex flex-col items-center pt-8 relative no-scrollbar transition duration-300">
+                    <img id="preview-avatar"
+                        src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=128&auto=format&fit=crop"
+                        class="w-16 h-16 rounded-full object-cover border-2 border-white shadow-md mb-2">
                     <h3 id="preview-name" class="font-bold text-sm text-center">🍀LHAnh🍀</h3>
                     <p id="preview-desc" class="text-[10px] opacity-75 text-center mb-2"></p>
 
@@ -202,85 +284,100 @@
 
         // ĐỊNH NGHĨA CÁC THEME LINKTREE
         const THEMES = {
-            air: {
-                id: 'air',
-                name: 'Air',
-                previewBg: 'bg-gradient-to-b from-sky-100 to-blue-200',
-                bodyBg: 'bg-gradient-to-b from-sky-100 to-blue-200',
-                textColor: 'text-slate-800',
-                groupHeader: 'text-sky-800',
-                linkCard: 'bg-white text-slate-800 border-white/60 shadow-sm',
-                cardText: 'text-slate-800'
+            // 1. Cực quang huyền bí (Aurora Glow)
+            aurora: {
+                id: 'aurora',
+                name: 'Aurora',
+                previewBg: 'bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-teal-400 via-indigo-900 to-slate-950',
+                bodyBg: 'bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-teal-400 via-indigo-900 to-slate-950 text-emerald-100',
+                textColor: 'text-emerald-100',
+                groupHeader: 'text-teal-300 font-semibold tracking-wider drop-shadow',
+                linkCard: 'bg-emerald-950/30 backdrop-blur-xl border border-teal-400/30 hover:border-teal-300 hover:bg-emerald-900/40 shadow-[0_8px_30px_rgb(0,0,0,0.3)] transition duration-300',
+                cardText: 'text-teal-50 font-medium'
             },
-            bloom: {
-                id: 'bloom',
-                name: 'Bloom',
-                previewBg: 'bg-gradient-to-br from-purple-900 via-indigo-950 to-pink-900',
-                bodyBg: 'bg-gradient-to-br from-purple-900 via-indigo-950 to-pink-900',
+
+            // 2. Hoàng hôn thơ mộng (Sunset Aura)
+            sunset: {
+                id: 'sunset',
+                name: 'Sunset Aura',
+                previewBg: 'bg-gradient-to-tr from-amber-500 via-rose-600 to-indigo-900',
+                bodyBg: 'bg-gradient-to-tr from-amber-500 via-rose-600 to-indigo-900 text-white',
                 textColor: 'text-white',
-                groupHeader: 'text-pink-400',
-                linkCard: 'bg-white/10 backdrop-blur-md text-white border-white/20 hover:bg-white/20 shadow-md',
-                cardText: 'text-white'
+                groupHeader: 'text-amber-200 font-bold tracking-widest drop-shadow-sm',
+                linkCard: 'bg-white/15 backdrop-blur-lg border border-white/30 hover:bg-white/25 shadow-lg shadow-rose-950/20 transition duration-300',
+                cardText: 'text-white font-semibold'
             },
-            breeze: {
-                id: 'breeze',
-                name: 'Breeze',
-                previewBg: 'bg-gradient-to-b from-pink-200 via-rose-100 to-purple-200',
-                bodyBg: 'bg-gradient-to-b from-pink-200 via-rose-100 to-purple-200',
-                textColor: 'text-rose-950',
-                groupHeader: 'text-rose-700',
-                linkCard: 'bg-white/90 text-rose-950 border-rose-100 shadow-sm',
-                cardText: 'text-rose-950'
+
+            // 3. Kính tối thượng hạng (Obsidian Glass)
+            obsidian: {
+                id: 'obsidian',
+                name: 'Obsidian',
+                previewBg: 'bg-[#0b0f19]',
+                bodyBg: 'bg-[#0b0f19] text-neutral-200',
+                textColor: 'text-neutral-200',
+                groupHeader: 'text-neutral-400 font-bold uppercase tracking-widest',
+                linkCard: 'bg-neutral-900/70 backdrop-blur-md border border-neutral-800 hover:border-neutral-600 hover:bg-neutral-800/80 shadow-2xl transition duration-300',
+                cardText: 'text-neutral-100 font-medium'
             },
-            blocks: {
-                id: 'blocks',
-                name: 'Blocks',
-                previewBg: 'bg-[#8a2be2]',
-                bodyBg: 'bg-[#8a2be2]',
-                textColor: 'text-white',
-                groupHeader: 'text-pink-300',
-                linkCard: 'bg-[#ff2d7a] text-white border-none shadow-md font-bold',
-                cardText: 'text-white font-bold'
+
+            // 4. Cyberpunk Neon tương lai
+            cyberpunk: {
+                id: 'cyberpunk',
+                name: 'Cyberpunk',
+                previewBg: 'bg-[#090014]',
+                bodyBg: 'bg-[#090014] text-cyan-300',
+                textColor: 'text-cyan-300',
+                groupHeader: 'text-fuchsia-400 font-black tracking-widest drop-shadow-[0_0_8px_rgba(232,121,249,0.8)]',
+                linkCard: 'bg-black/60 backdrop-blur-md border-2 border-cyan-400/80 hover:border-fuchsia-400 hover:shadow-[0_0_20px_rgba(34,211,238,0.6)] shadow-[0_0_10px_rgba(34,211,238,0.3)] transition duration-300',
+                cardText: 'text-cyan-200 font-bold tracking-wide'
             },
-            darkglass: {
-                id: 'darkglass',
-                name: 'Dark Glass',
-                previewBg: 'bg-gradient-to-br from-gray-950 via-slate-900 to-indigo-950',
-                bodyBg: 'bg-gradient-to-br from-gray-950 via-slate-900 to-indigo-950',
-                textColor: 'text-white',
-                groupHeader: 'text-sky-400',
-                linkCard: 'bg-white/5 backdrop-blur-lg border border-white/10 text-gray-100 shadow-lg',
-                cardText: 'text-gray-100'
+
+            // 5. Trà xanh đất nung tối giản (Matcha Clay)
+            matcha: {
+                id: 'matcha',
+                name: 'Matcha Clay',
+                previewBg: 'bg-gradient-to-b from-[#e8ece5] to-[#d3decb]',
+                bodyBg: 'bg-gradient-to-b from-[#e8ece5] to-[#d3decb] text-[#2c3e2d]',
+                textColor: 'text-[#2c3e2d]',
+                groupHeader: 'text-[#3e563f] font-bold tracking-wide',
+                linkCard: 'bg-white/80 backdrop-blur border border-[#b8c9b0] text-[#2c3e2d] hover:bg-white shadow-sm hover:shadow-md transition duration-300',
+                cardText: 'text-[#2c3e2d] font-semibold'
             },
-            mineral: {
-                id: 'mineral',
-                name: 'Mineral',
-                previewBg: 'bg-[#f4efe6]',
-                bodyBg: 'bg-[#f4efe6]',
-                textColor: 'text-[#3e3831]',
-                groupHeader: 'text-[#6a5e52]',
-                linkCard: 'bg-white text-[#3e3831] border border-[#e4dbcb] shadow-sm',
-                cardText: 'text-[#3e3831]'
+
+            // 6. Mây tím pastel ngọt ngào (Lilac Dream)
+            lilac: {
+                id: 'lilac',
+                name: 'Lilac Dream',
+                previewBg: 'bg-gradient-to-br from-indigo-200 via-purple-100 to-pink-200',
+                bodyBg: 'bg-gradient-to-br from-indigo-200 via-purple-100 to-pink-200 text-indigo-950',
+                textColor: 'text-indigo-950',
+                groupHeader: 'text-purple-800 font-bold',
+                linkCard: 'bg-white/70 backdrop-blur-md border border-purple-200/60 text-indigo-950 hover:bg-white shadow-[0_4px_20px_rgba(168,85,247,0.1)] transition duration-300',
+                cardText: 'text-indigo-950 font-semibold'
             },
-            lake: {
-                id: 'lake',
-                name: 'Lake',
-                previewBg: 'bg-gradient-to-b from-slate-900 to-teal-950',
-                bodyBg: 'bg-gradient-to-b from-slate-900 to-teal-950',
-                textColor: 'text-teal-100',
-                groupHeader: 'text-teal-300',
-                linkCard: 'bg-teal-900/40 text-teal-100 border border-teal-500/30 backdrop-blur-md shadow-sm',
-                cardText: 'text-teal-100'
+
+            // 7. Đại dương sâu thẳm (Deep Ocean)
+            ocean: {
+                id: 'ocean',
+                name: 'Deep Ocean',
+                previewBg: 'bg-gradient-to-b from-blue-950 via-slate-900 to-black',
+                bodyBg: 'bg-gradient-to-b from-blue-950 via-slate-900 to-black text-sky-200',
+                textColor: 'text-sky-200',
+                groupHeader: 'text-sky-400 font-semibold tracking-wider',
+                linkCard: 'bg-blue-900/20 backdrop-blur-xl border border-sky-400/20 hover:border-sky-400/60 hover:bg-blue-900/40 shadow-lg transition duration-300',
+                cardText: 'text-sky-100 font-medium'
             },
-            grid: {
-                id: 'grid',
-                name: 'Grid',
-                previewBg: 'bg-[#e2f89f]',
-                bodyBg: 'bg-[#e2f89f]',
-                textColor: 'text-neutral-900',
-                groupHeader: 'text-neutral-900 font-extrabold',
-                linkCard: 'bg-white text-black border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]',
-                cardText: 'text-black font-extrabold'
+
+            // 8. Đen trắng Neo-Brutalism phá cách
+            neo: {
+                id: 'neo',
+                name: 'Neo Brutal',
+                previewBg: 'bg-[#fffdf0]',
+                bodyBg: 'bg-[#fffdf0] text-black',
+                textColor: 'text-black',
+                groupHeader: 'text-black font-black uppercase tracking-wider',
+                linkCard: 'bg-white text-black border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all font-black',
+                cardText: 'text-black font-black'
             }
         };
 
@@ -426,8 +523,8 @@
         window.editSocial = async (platform) => {
             if (!profileData.socials) profileData.socials = {};
             const currentVal = profileData.socials[platform] || "";
-            const promptMsg = platform === 'email' 
-                ? "Nhập địa chỉ Email của bạn:" 
+            const promptMsg = platform === 'email'
+                ? "Nhập địa chỉ Email của bạn:"
                 : `Nhập liên kết / username cho ${platform.toUpperCase()}:`;
 
             const res = prompt(promptMsg, currentVal);
