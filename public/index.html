@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bio Cá Nhân</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+</head>
+<body id="body-container" class="min-h-screen flex flex-col items-center justify-start p-4 font-sans transition duration-500">
+
+  <div class="w-full max-w-md text-center mt-12 flex flex-col items-center">
+    <!-- Avatar -->
+    <div class="relative group mb-4">
+      <div class="absolute -inset-0.5 bg-gradient-to-r from-pink-500 to-indigo-500 rounded-full blur opacity-75"></div>
+      <img id="avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=256&auto=format&fit=crop" class="relative w-28 h-28 rounded-full object-cover border-2 border-white/20 shadow-xl" alt="Avatar">
+    </div>
+    
+    <!-- Thông tin cá nhân -->
+    <h1 id="bio-name" class="text-2xl font-extrabold tracking-wide">...</h1>
+    <p id="bio-desc" class="text-sm mt-1 mb-4 max-w-xs font-light opacity-80 leading-relaxed"></p>
+
+    <!-- Social Icons -->
+    <div id="socials-container" class="flex items-center justify-center gap-3 mb-8 empty:hidden"></div>
+
+    <!-- Danh sách Sections theo layout và theme -->
+    <div id="links-container" class="w-full space-y-6"></div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCXvqlnqB9u0QoZAX6rmFBngHRmAlnjWYs",
+      authDomain: "shops-976ea.firebaseapp.com",
+      projectId: "shops-976ea",
+      storageBucket: "shops-976ea.firebasestorage.app",
+      messagingSenderId: "880320435925",
+      appId: "1:880320435925:web:df55e51bc74d45c75ff45c",
+      measurementId: "G-TVQR4E2F9K"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const docRef = doc(db, "bio", "profile");
+
+    const THEMES = {
+      air: {
+        bodyBg: 'bg-gradient-to-b from-sky-100 to-blue-200 text-slate-800',
+        groupHeader: 'text-sky-800',
+        linkCard: 'bg-white text-slate-800 border border-white/60 shadow-md hover:bg-slate-50',
+        cardText: 'text-slate-800'
+      },
+      bloom: {
+        bodyBg: 'bg-gradient-to-br from-purple-900 via-indigo-950 to-pink-900 text-white',
+        groupHeader: 'text-pink-400',
+        linkCard: 'bg-white/10 backdrop-blur-md text-white border border-white/20 hover:bg-white/20 shadow-lg',
+        cardText: 'text-white'
+      },
+      breeze: {
+        bodyBg: 'bg-gradient-to-b from-pink-200 via-rose-100 to-purple-200 text-rose-950',
+        groupHeader: 'text-rose-700',
+        linkCard: 'bg-white/90 text-rose-950 border border-rose-100 shadow-md hover:bg-white',
+        cardText: 'text-rose-950'
+      },
+      blocks: {
+        bodyBg: 'bg-[#8a2be2] text-white',
+        groupHeader: 'text-pink-300 font-bold',
+        linkCard: 'bg-[#ff2d7a] text-white border-none shadow-lg hover:brightness-110 font-bold',
+        cardText: 'text-white font-bold'
+      },
+      darkglass: {
+        bodyBg: 'bg-gradient-to-br from-gray-950 via-slate-900 to-indigo-950 text-white',
+        groupHeader: 'text-sky-400',
+        linkCard: 'bg-white/5 backdrop-blur-lg border border-white/10 text-gray-100 shadow-lg hover:bg-white/10',
+        cardText: 'text-gray-100'
+      },
+      mineral: {
+        bodyBg: 'bg-[#f4efe6] text-[#3e3831]',
+        groupHeader: 'text-[#6a5e52]',
+        linkCard: 'bg-white text-[#3e3831] border border-[#e4dbcb] shadow-md hover:bg-[#faf7f2]',
+        cardText: 'text-[#3e3831]'
+      },
+      lake: {
+        bodyBg: 'bg-gradient-to-b from-slate-900 to-teal-950 text-teal-100',
+        groupHeader: 'text-teal-300',
+        linkCard: 'bg-teal-900/40 text-teal-100 border border-teal-500/30 backdrop-blur-md shadow-md hover:bg-teal-800/50',
+        cardText: 'text-teal-100'
+      },
+      grid: {
+        bodyBg: 'bg-[#e2f89f] text-neutral-900',
+        groupHeader: 'text-neutral-900 font-extrabold',
+        linkCard: 'bg-white text-black border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-0.5 hover:translate-y-0.5 font-extrabold',
+        cardText: 'text-black font-extrabold'
+      }
+    };
+
+    window.handleLinkClick = (event, itemId, url) => {
+      event.preventDefault();
+      window.open(url, '_blank');
+
+      (async () => {
+        try {
+          const snap = await getDoc(docRef);
+          if (!snap.exists()) return;
+          const freshData = snap.data();
+
+          if (freshData.sections) {
+            freshData.sections.forEach(sec => {
+              if (sec.type === 'group' && sec.items) {
+                const target = sec.items.find(i => String(i.id) === String(itemId));
+                if (target) target.clicks = (parseInt(target.clicks) || 0) + 1;
+              } else if (sec.type === 'link' && sec.item && String(sec.item.id) === String(itemId)) {
+                sec.item.clicks = (parseInt(sec.item.clicks) || 0) + 1;
+              }
+            });
+            await setDoc(docRef, freshData);
+          }
+        } catch (err) {
+          console.error("Lỗi cập nhật click:", err);
+        }
+      })();
+    };
+
+    async function loadBio() {
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        const currentData = docSnap.data();
+        const themeId = currentData.theme || 'air';
+        const theme = THEMES[themeId] || THEMES.air;
+
+        document.getElementById('body-container').className = `min-h-screen flex flex-col items-center justify-start p-4 font-sans transition duration-500 ${theme.bodyBg}`;
+        document.getElementById('bio-name').innerText = currentData.name || "🍀LHAnh🍀";
+        document.getElementById('bio-desc').innerText = currentData.desc || "";
+        if (currentData.avatar) {
+          document.getElementById('avatar').src = currentData.avatar;
+        }
+
+        // Render Social Icons
+        const socialsContainer = document.getElementById('socials-container');
+        socialsContainer.innerHTML = '';
+        const s = currentData.socials || {};
+        if (s.instagram) socialsContainer.innerHTML += `<a href="${s.instagram.startsWith('http') ? s.instagram : 'https://instagram.com/' + s.instagram}" target="_blank" class="w-9 h-9 rounded-full bg-white/20 backdrop-blur flex items-center justify-center shadow hover:scale-110 transition"><i class="fa-brands fa-instagram text-sm"></i></a>`;
+        if (s.tiktok) socialsContainer.innerHTML += `<a href="${s.tiktok.startsWith('http') ? s.tiktok : 'https://tiktok.com/@' + s.tiktok}" target="_blank" class="w-9 h-9 rounded-full bg-white/20 backdrop-blur flex items-center justify-center shadow hover:scale-110 transition"><i class="fa-brands fa-tiktok text-sm"></i></a>`;
+        if (s.youtube) socialsContainer.innerHTML += `<a href="${s.youtube.startsWith('http') ? s.youtube : 'https://youtube.com/' + s.youtube}" target="_blank" class="w-9 h-9 rounded-full bg-white/20 backdrop-blur flex items-center justify-center shadow hover:scale-110 transition"><i class="fa-brands fa-youtube text-sm"></i></a>`;
+        if (s.email) socialsContainer.innerHTML += `<a href="mailto:${s.email}" class="w-9 h-9 rounded-full bg-white/20 backdrop-blur flex items-center justify-center shadow hover:scale-110 transition"><i class="fa-regular fa-envelope text-sm"></i></a>`;
+
+        // Render Sections theo Layout & Theme
+        const container = document.getElementById('links-container');
+        container.innerHTML = '';
+
+        const sections = currentData.sections || [];
+
+        sections.forEach(sec => {
+          if (sec.type === 'group' && sec.active !== false) {
+            const activeItems = (sec.items || []).filter(item => item.active !== false);
+            if (activeItems.length === 0) return; // Mặc định ẩn nhóm nếu không có link
+
+            const layout = sec.layout || 'stack';
+            let bodyHtml = '';
+
+            if (layout === 'grid') {
+              bodyHtml = `
+                <div class="grid grid-cols-2 gap-3">
+                  ${activeItems.map(item => `
+                    <a href="${item.url}" onclick="handleLinkClick(event, '${item.id}', '${item.url}')" class="p-4 rounded-2xl flex items-center justify-center text-center font-semibold text-xs transition transform hover:-translate-y-0.5 ${theme.linkCard}">
+                      <span class="truncate ${theme.cardText}">${item.title}</span>
+                    </a>
+                  `).join('')}
+                </div>
+              `;
+            } else if (layout === 'carousel') {
+              bodyHtml = `
+                <div class="flex gap-3 overflow-x-auto no-scrollbar py-1">
+                  ${activeItems.map(item => `
+                    <a href="${item.url}" onclick="handleLinkClick(event, '${item.id}', '${item.url}')" class="flex-shrink-0 w-44 p-4 rounded-2xl text-center font-semibold text-xs transition transform hover:-translate-y-0.5 truncate ${theme.linkCard}">
+                      <span class="truncate ${theme.cardText}">${item.title}</span>
+                    </a>
+                  `).join('')}
+                </div>
+              `;
+            } else if (layout === 'showcase') {
+              bodyHtml = `
+                <div class="space-y-3">
+                  ${activeItems.map(item => `
+                    <a href="${item.url}" onclick="handleLinkClick(event, '${item.id}', '${item.url}')" class="block p-5 rounded-2xl transition transform hover:-translate-y-0.5 text-left ${theme.linkCard}">
+                      <div class="flex items-center justify-between">
+                        <span class="font-bold text-sm ${theme.cardText}">${item.title}</span>
+                        <i class="fa-solid fa-arrow-up-right-from-square text-xs opacity-75"></i>
+                      </div>
+                      <p class="text-[11px] opacity-75 mt-1 truncate">${item.url}</p>
+                    </a>
+                  `).join('')}
+                </div>
+              `;
+            } else {
+              // Stack mặc định
+              bodyHtml = `
+                <div class="space-y-2.5">
+                  ${activeItems.map(item => `
+                    <a href="${item.url}" onclick="handleLinkClick(event, '${item.id}', '${item.url}')" class="block w-full py-4 px-5 rounded-2xl font-semibold text-sm text-center transition transform hover:-translate-y-0.5 ${theme.linkCard}">
+                      <span class="${theme.cardText}">${item.title}</span>
+                    </a>
+                  `).join('')}
+                </div>
+              `;
+            }
+
+            container.innerHTML += `
+              <div class="w-full space-y-3 pt-2">
+                <h3 class="text-xs font-bold uppercase tracking-wider text-center ${theme.groupHeader}">${sec.title}</h3>
+                ${bodyHtml}
+              </div>
+            `;
+          } else if (sec.type === 'link' && sec.item && sec.item.active !== false) {
+            container.innerHTML += `
+              <a href="${sec.item.url}" onclick="handleLinkClick(event, '${sec.item.id}', '${sec.item.url}')" class="block w-full py-4 px-5 rounded-2xl font-semibold text-sm text-center transition transform hover:-translate-y-0.5 ${theme.linkCard}">
+                <span class="${theme.cardText}">${sec.item.title}</span>
+              </a>
+            `;
+          }
+        });
+      }
+    }
+
+    loadBio();
+  </script>
+</body>
+</html>

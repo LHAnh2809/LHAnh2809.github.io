@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bio Dashboard - Theme & Links</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+    <style>
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .sortable-ghost { opacity: 0.35; background: #e0e7ff !important; border: 2px dashed #6366f1 !important; }
+        .drag-handle-group, .drag-handle-item { cursor: grab; }
+        .drag-handle-group:active, .drag-handle-item:active { cursor: grabbing; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .nested-dropzone { min-height: 56px !important; }
+        .empty-hint { pointer-events: none !important; user-select: none !important; }
+    </style>
+</head>
+
+<body class="bg-[#f6f7f9] font-sans h-screen flex flex-col overflow-hidden text-slate-800">
+
+    <!-- TOPNAV -->
+    <header class="h-14 bg-white border-b border-gray-200 px-6 flex justify-between items-center flex-shrink-0 z-10">
+        <div class="flex items-center gap-3">
+            <i class="fa-brands fa-pagelines text-2xl text-green-600"></i>
+            <span class="font-bold text-sm tracking-tight">Bio Dashboard</span>
+        </div>
+        <div class="flex items-center gap-4">
+            <div class="text-xs bg-purple-100 text-purple-700 px-3 py-1.5 rounded-full font-semibold">
+                <i class="fa-solid fa-bolt mr-1"></i> Pro Plan
+            </div>
+            <button onclick="handleLogout()" id="btn-logout" class="hidden text-xs text-red-500 font-medium hover:underline">Đăng xuất</button>
+        </div>
+    </header>
+
+    <!-- MÀN HÌNH ĐĂNG NHẬP -->
+    <div id="login-screen" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-sm text-center">
+            <div class="w-12 h-12 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center mx-auto mb-4 text-xl">
+                <i class="fa-solid fa-lock"></i>
+            </div>
+            <h2 class="text-xl font-bold mb-1">Đăng nhập Admin</h2>
+            <p class="text-xs text-gray-400 mb-6">Quản lý giao diện Bio của bạn</p>
+            <input type="email" id="login-email" placeholder="Email Admin" class="w-full p-3 mb-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-purple-600">
+            <input type="password" id="login-pass" placeholder="Mật khẩu" class="w-full p-3 mb-4 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-purple-600">
+            <button onclick="handleLogin()" class="w-full bg-[#8a2be2] hover:bg-purple-700 text-white font-bold py-3 rounded-xl text-sm shadow-lg transition">Đăng Nhập</button>
+        </div>
+    </div>
+
+    <!-- KHỐI QUẢN LÝ -->
+    <div class="flex-1 flex overflow-hidden">
+
+        <!-- SIDEBAR TRÁI -->
+        <aside class="w-60 bg-white border-r border-gray-200 p-4 flex flex-col justify-between hidden md:flex flex-shrink-0">
+            <div class="space-y-6">
+                <div class="flex items-center gap-3 p-2 bg-gray-50 rounded-xl">
+                    <img id="admin-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=128&auto=format&fit=crop" class="w-10 h-10 rounded-full object-cover">
+                    <div class="truncate">
+                        <h4 id="admin-display-name" class="font-bold text-xs truncate">LHAnh</h4>
+                        <span class="text-[10px] text-gray-400">linktr.ee/lhanh</span>
+                    </div>
+                </div>
+
+                <!-- MENU TABS CHUYỂN LINKS VÀ DESIGN -->
+                <nav class="space-y-1">
+                    <button onclick="switchTab('links')" id="tab-btn-links" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl bg-purple-50 text-purple-700 font-semibold text-xs transition">
+                        <i class="fa-solid fa-list text-[#8a2be2]"></i> Links
+                    </button>
+                    <button onclick="switchTab('design')" id="tab-btn-design" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-500 hover:bg-gray-50 font-medium text-xs transition">
+                        <i class="fa-solid fa-palette"></i> Design (Themes)
+                    </button>
+                    <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-500 hover:bg-gray-50 font-medium text-xs">
+                        <i class="fa-solid fa-chart-line"></i> Analytics
+                    </a>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- PANEL NỘI DUNG Ở GIỮA -->
+        <main class="flex-1 overflow-y-auto p-6 md:p-8">
+            <div class="max-w-xl mx-auto space-y-6">
+
+                <!-- 1. TAB LINKS (Quản lý Link & Layout) -->
+                <div id="view-links" class="space-y-6">
+                    <!-- PROFILE HEADER -->
+                    <div class="flex items-center gap-5 px-2 py-3 bg-white rounded-3xl p-4 border border-gray-200/70 shadow-sm">
+                        <div class="relative group cursor-pointer" onclick="changeAvatar()">
+                            <img id="main-profile-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=128&auto=format&fit=crop" class="w-16 h-16 rounded-full object-cover shadow border border-gray-200">
+                            <div class="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition text-white text-xs font-semibold">
+                                <i class="fa-solid fa-camera"></i>
+                            </div>
+                        </div>
+
+                        <div class="flex-1 space-y-1">
+                            <input type="text" id="main-profile-name" onchange="updateProfileName(this.value)" value="🍀LHAnh🍀" class="font-bold text-base text-neutral-900 border-b border-transparent hover:border-gray-300 focus:border-black focus:outline-none bg-transparent w-full">
+                            <input type="text" id="main-profile-desc" onchange="updateProfileDesc(this.value)" placeholder="Add bio" value="" class="text-xs text-gray-400 font-medium border-b border-transparent hover:border-gray-300 focus:border-black focus:outline-none bg-transparent w-full placeholder-gray-400">
+
+                            <!-- Social Icons -->
+                            <div class="flex items-center gap-2 pt-1" id="social-icons-bar">
+                                <div class="relative group cursor-pointer" onclick="editSocial('instagram')">
+                                    <div class="w-6 h-6 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center text-gray-600 hover:text-pink-600 shadow-sm text-[10px]"><i class="fa-brands fa-instagram"></i></div>
+                                </div>
+                                <div class="relative group cursor-pointer" onclick="editSocial('tiktok')">
+                                    <div class="w-6 h-6 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center text-gray-600 hover:text-black shadow-sm text-[10px]"><i class="fa-brands fa-tiktok"></i></div>
+                                </div>
+                                <div class="relative group cursor-pointer" onclick="editSocial('youtube')">
+                                    <div class="w-6 h-6 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center text-gray-600 hover:text-red-600 shadow-sm text-[10px]"><i class="fa-brands fa-youtube"></i></div>
+                                </div>
+                                <div class="relative group cursor-pointer" onclick="editSocial('email')">
+                                    <div class="w-6 h-6 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center text-gray-600 hover:text-indigo-600 shadow-sm text-[10px]"><i class="fa-regular fa-envelope"></i></div>
+                                </div>
+                                <button onclick="editSocial('custom')" class="w-6 h-6 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center text-gray-600 text-[10px] shadow-sm transition"><i class="fa-solid fa-plus"></i></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Nút thao tác -->
+                    <div class="grid grid-cols-2 gap-3">
+                        <button onclick="toggleAddForm('link')" class="bg-black hover:bg-neutral-800 text-white font-semibold py-3 px-4 rounded-full shadow-md transition flex items-center justify-center gap-2 text-xs">
+                            <i class="fa-solid fa-plus"></i> Thêm Link Ngoài
+                        </button>
+                        <button onclick="toggleAddForm('group')" class="bg-white border border-gray-300 hover:bg-gray-50 text-neutral-800 font-semibold py-3 px-4 rounded-full shadow-sm transition flex items-center justify-center gap-2 text-xs">
+                            <i class="fa-solid fa-layer-group"></i> Thêm Nhóm (Layout)
+                        </button>
+                    </div>
+
+                    <!-- Form thêm ngoài -->
+                    <div id="add-form" class="bg-white p-5 rounded-3xl border border-gray-200 shadow-sm space-y-3 hidden">
+                        <h4 id="form-type-title" class="font-bold text-xs text-gray-500 uppercase tracking-wider">Thêm mới</h4>
+                        <div id="form-fields" class="space-y-3"></div>
+                        <div class="flex gap-2 pt-1">
+                            <button onclick="submitNewItem()" class="flex-1 bg-black hover:bg-neutral-800 text-white py-2.5 rounded-xl text-xs font-bold">Xác nhận</button>
+                            <button onclick="document.getElementById('add-form').classList.add('hidden')" class="px-4 bg-gray-100 text-gray-600 py-2.5 rounded-xl text-xs font-semibold">Hủy</button>
+                        </div>
+                    </div>
+
+                    <!-- Danh sách mục Linktree -->
+                    <div id="sections-container" class="space-y-5"></div>
+                </div>
+
+                <!-- 2. TAB DESIGN / THEMES (Khớp giao diện như ảnh mẫu) -->
+                <div id="view-design" class="space-y-6 hidden">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h2 class="text-xl font-extrabold text-neutral-900 tracking-tight">Themes</h2>
+                            <p class="text-xs text-gray-500 mt-0.5">Chọn phong cách và màu sắc cho trang Bio của bạn</p>
+                        </div>
+                        <span class="text-xs font-semibold px-3 py-1 bg-purple-100 text-purple-700 rounded-full">Customizable</span>
+                    </div>
+
+                    <!-- Grid Thư Viện Theme -->
+                    <div class="grid grid-cols-3 sm:grid-cols-4 gap-4" id="themes-grid"></div>
+                </div>
+
+            </div>
+        </main>
+
+        <!-- RIGHT MOBILE PREVIEW (Tự động thay đổi phong cách theo theme đã chọn) -->
+        <aside class="w-[380px] bg-white border-l border-gray-200 flex flex-col items-center justify-center p-6 hidden lg:flex flex-shrink-0">
+            <div class="w-[280px] h-[560px] bg-slate-900 rounded-[40px] p-3 shadow-2xl border-4 border-slate-800 relative flex flex-col">
+                <div class="w-24 h-4 bg-slate-800 rounded-b-xl mx-auto absolute top-3 left-1/2 -translate-x-1/2 z-20"></div>
+
+                <!-- Khung điện thoại áp dụng Theme -->
+                <div id="phone-preview-screen" class="w-full h-full rounded-[30px] overflow-y-auto p-4 flex flex-col items-center pt-8 relative no-scrollbar transition duration-300">
+                    <img id="preview-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=128&auto=format&fit=crop" class="w-16 h-16 rounded-full object-cover border-2 border-white shadow-md mb-2">
+                    <h3 id="preview-name" class="font-bold text-sm text-center">🍀LHAnh🍀</h3>
+                    <p id="preview-desc" class="text-[10px] opacity-75 text-center mb-2"></p>
+
+                    <div id="preview-socials" class="flex items-center justify-center gap-2 mb-4 empty:hidden"></div>
+                    <div id="preview-sections" class="w-full space-y-4"></div>
+                </div>
+            </div>
+        </aside>
+
+    </div>
+
+    <!-- SCRIPT & FIREBASE ENGINE -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCXvqlnqB9u0QoZAX6rmFBngHRmAlnjWYs",
+            authDomain: "shops-976ea.firebaseapp.com",
+            projectId: "shops-976ea",
+            storageBucket: "shops-976ea.firebasestorage.app",
+            messagingSenderId: "880320435925",
+            appId: "1:880320435925:web:df55e51bc74d45c75ff45c",
+            measurementId: "G-TVQR4E2F9K"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+        const docRef = doc(db, "bio", "profile");
+
+        // ĐỊNH NGHĨA CÁC THEME LINKTREE
+        const THEMES = {
+            air: {
+                id: 'air',
+                name: 'Air',
+                previewBg: 'bg-gradient-to-b from-sky-100 to-blue-200',
+                bodyBg: 'bg-gradient-to-b from-sky-100 to-blue-200',
+                textColor: 'text-slate-800',
+                groupHeader: 'text-sky-800',
+                linkCard: 'bg-white text-slate-800 border-white/60 shadow-sm',
+                cardText: 'text-slate-800'
+            },
+            bloom: {
+                id: 'bloom',
+                name: 'Bloom',
+                previewBg: 'bg-gradient-to-br from-purple-900 via-indigo-950 to-pink-900',
+                bodyBg: 'bg-gradient-to-br from-purple-900 via-indigo-950 to-pink-900',
+                textColor: 'text-white',
+                groupHeader: 'text-pink-400',
+                linkCard: 'bg-white/10 backdrop-blur-md text-white border-white/20 hover:bg-white/20 shadow-md',
+                cardText: 'text-white'
+            },
+            breeze: {
+                id: 'breeze',
+                name: 'Breeze',
+                previewBg: 'bg-gradient-to-b from-pink-200 via-rose-100 to-purple-200',
+                bodyBg: 'bg-gradient-to-b from-pink-200 via-rose-100 to-purple-200',
+                textColor: 'text-rose-950',
+                groupHeader: 'text-rose-700',
+                linkCard: 'bg-white/90 text-rose-950 border-rose-100 shadow-sm',
+                cardText: 'text-rose-950'
+            },
+            blocks: {
+                id: 'blocks',
+                name: 'Blocks',
+                previewBg: 'bg-[#8a2be2]',
+                bodyBg: 'bg-[#8a2be2]',
+                textColor: 'text-white',
+                groupHeader: 'text-pink-300',
+                linkCard: 'bg-[#ff2d7a] text-white border-none shadow-md font-bold',
+                cardText: 'text-white font-bold'
+            },
+            darkglass: {
+                id: 'darkglass',
+                name: 'Dark Glass',
+                previewBg: 'bg-gradient-to-br from-gray-950 via-slate-900 to-indigo-950',
+                bodyBg: 'bg-gradient-to-br from-gray-950 via-slate-900 to-indigo-950',
+                textColor: 'text-white',
+                groupHeader: 'text-sky-400',
+                linkCard: 'bg-white/5 backdrop-blur-lg border border-white/10 text-gray-100 shadow-lg',
+                cardText: 'text-gray-100'
+            },
+            mineral: {
+                id: 'mineral',
+                name: 'Mineral',
+                previewBg: 'bg-[#f4efe6]',
+                bodyBg: 'bg-[#f4efe6]',
+                textColor: 'text-[#3e3831]',
+                groupHeader: 'text-[#6a5e52]',
+                linkCard: 'bg-white text-[#3e3831] border border-[#e4dbcb] shadow-sm',
+                cardText: 'text-[#3e3831]'
+            },
+            lake: {
+                id: 'lake',
+                name: 'Lake',
+                previewBg: 'bg-gradient-to-b from-slate-900 to-teal-950',
+                bodyBg: 'bg-gradient-to-b from-slate-900 to-teal-950',
+                textColor: 'text-teal-100',
+                groupHeader: 'text-teal-300',
+                linkCard: 'bg-teal-900/40 text-teal-100 border border-teal-500/30 backdrop-blur-md shadow-sm',
+                cardText: 'text-teal-100'
+            },
+            grid: {
+                id: 'grid',
+                name: 'Grid',
+                previewBg: 'bg-[#e2f89f]',
+                bodyBg: 'bg-[#e2f89f]',
+                textColor: 'text-neutral-900',
+                groupHeader: 'text-neutral-900 font-extrabold',
+                linkCard: 'bg-white text-black border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]',
+                cardText: 'text-black font-extrabold'
+            }
+        };
+
+        let profileData = {};
+        let sections = [];
+        let currentThemeId = 'air';
+        let openedLayoutPanels = new Set();
+        let openedGroupAddForms = new Set();
+        let rootSortable = null;
+        let nestedSortables = [];
+        let currentAddType = 'link';
+
+        const LAYOUT_DESCRIPTIONS = {
+            stack: 'Display links in a compact list.',
+            grid: 'Display links side by side in two columns.',
+            carousel: 'Display links horizontally in a swipeable slider.',
+            showcase: 'Feature links prominently with enlarged showcase preview.'
+        };
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                document.getElementById('login-screen').classList.add('hidden');
+                document.getElementById('btn-logout').classList.remove('hidden');
+                loadData();
+            } else {
+                document.getElementById('login-screen').classList.remove('hidden');
+                document.getElementById('btn-logout').classList.add('hidden');
+            }
+        });
+
+        window.handleLogin = async () => {
+            const email = document.getElementById('login-email').value;
+            const pass = document.getElementById('login-pass').value;
+            try {
+                await signInWithEmailAndPassword(auth, email, pass);
+            } catch (err) {
+                alert("Email hoặc Mật khẩu không chính xác!");
+            }
+        };
+
+        window.handleLogout = () => signOut(auth);
+
+        // Chuyển đổi Tab Links / Design
+        window.switchTab = (tab) => {
+            const btnLinks = document.getElementById('tab-btn-links');
+            const btnDesign = document.getElementById('tab-btn-design');
+            const viewLinks = document.getElementById('view-links');
+            const viewDesign = document.getElementById('view-design');
+
+            if (tab === 'links') {
+                btnLinks.className = "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl bg-purple-50 text-purple-700 font-semibold text-xs transition";
+                btnDesign.className = "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-500 hover:bg-gray-50 font-medium text-xs transition";
+                viewLinks.classList.remove('hidden');
+                viewDesign.classList.add('hidden');
+            } else {
+                btnDesign.className = "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl bg-purple-50 text-purple-700 font-semibold text-xs transition";
+                btnLinks.className = "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-500 hover:bg-gray-50 font-medium text-xs transition";
+                viewLinks.classList.add('hidden');
+                viewDesign.classList.remove('hidden');
+                renderThemeGallery();
+            }
+        };
+
+        function loadData() {
+            onSnapshot(docRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    profileData = docSnap.data();
+                    sections = profileData.sections || [];
+                    currentThemeId = profileData.theme || 'air';
+
+                    const defaultAvatar = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=128&auto=format&fit=crop";
+                    const avatarUrl = profileData.avatar || defaultAvatar;
+                    const displayName = profileData.name || "🍀LHAnh🍀";
+                    const bioDesc = profileData.desc || "";
+
+                    document.getElementById('admin-avatar').src = avatarUrl;
+                    document.getElementById('main-profile-avatar').src = avatarUrl;
+                    document.getElementById('preview-avatar').src = avatarUrl;
+
+                    document.getElementById('admin-display-name').innerText = displayName;
+                    document.getElementById('main-profile-name').value = displayName;
+                    document.getElementById('preview-name').innerText = displayName;
+
+                    document.getElementById('main-profile-desc').value = bioDesc;
+                    document.getElementById('preview-desc').innerText = bioDesc;
+
+                    renderThemeGallery();
+                    renderSocialsPreview();
+                    renderEditor();
+                    renderPreview();
+                    initSortable();
+                }
+            });
+        }
+
+        // Render kho Theme (Design Tab)
+        function renderThemeGallery() {
+            const container = document.getElementById('themes-grid');
+            if (!container) return;
+            container.innerHTML = '';
+
+            Object.values(THEMES).forEach(th => {
+                const isSelected = th.id === currentThemeId;
+                container.innerHTML += `
+                    <div onclick="selectTheme('${th.id}')" class="flex flex-col items-center gap-2 cursor-pointer group">
+                        <div class="w-full aspect-[4/5] rounded-3xl ${th.previewBg} p-3 flex flex-col justify-between border-2 transition transform group-hover:scale-105 shadow-sm relative ${isSelected ? 'border-purple-600 ring-4 ring-purple-100' : 'border-transparent'}">
+                            <span class="text-xs font-serif font-bold ${th.textColor}">Aa</span>
+                            <div class="w-full h-5 rounded-lg bg-white/70 shadow-sm"></div>
+                            ${isSelected ? '<span class="absolute top-2 right-2 w-5 h-5 bg-purple-600 text-white rounded-full flex items-center justify-center text-[10px] shadow"><i class="fa-solid fa-check"></i></span>' : ''}
+                        </div>
+                        <span class="text-xs font-semibold ${isSelected ? 'text-purple-700 font-bold' : 'text-gray-600'}">${th.name}</span>
+                    </div>
+                `;
+            });
+        }
+
+        window.selectTheme = async (themeId) => {
+            currentThemeId = themeId;
+            profileData.theme = themeId;
+            renderThemeGallery();
+            renderPreview();
+            await syncFirebase(false);
+        };
+
+        window.changeAvatar = async () => {
+            const newUrl = prompt("Nhập link ảnh đại diện mới (URL ảnh):", profileData.avatar || "");
+            if (newUrl && newUrl.trim()) {
+                profileData.avatar = newUrl.trim();
+                await syncFirebase(false);
+            }
+        };
+
+        window.updateProfileName = async (val) => {
+            profileData.name = val;
+            await syncFirebase(false);
+        };
+
+        window.updateProfileDesc = async (val) => {
+            profileData.desc = val;
+            await syncFirebase(false);
+        };
+
+        window.editSocial = async (platform) => {
+            if (!profileData.socials) profileData.socials = {};
+            const currentVal = profileData.socials[platform] || "";
+            const promptMsg = platform === 'email' 
+                ? "Nhập địa chỉ Email của bạn:" 
+                : `Nhập liên kết / username cho ${platform.toUpperCase()}:`;
+
+            const res = prompt(promptMsg, currentVal);
+            if (res !== null) {
+                profileData.socials[platform] = res.trim();
+                await syncFirebase(false);
+            }
+        };
+
+        function renderSocialsPreview() {
+            const container = document.getElementById('preview-socials');
+            container.innerHTML = '';
+            const s = profileData.socials || {};
+
+            if (s.instagram) {
+                container.innerHTML += `<a href="${s.instagram.startsWith('http') ? s.instagram : 'https://instagram.com/' + s.instagram}" target="_blank" class="w-6 h-6 rounded-full bg-white/20 backdrop-blur text-current flex items-center justify-center text-[10px] shadow-sm"><i class="fa-brands fa-instagram"></i></a>`;
+            }
+            if (s.tiktok) {
+                container.innerHTML += `<a href="${s.tiktok.startsWith('http') ? s.tiktok : 'https://tiktok.com/@' + s.tiktok}" target="_blank" class="w-6 h-6 rounded-full bg-white/20 backdrop-blur text-current flex items-center justify-center text-[10px] shadow-sm"><i class="fa-brands fa-tiktok"></i></a>`;
+            }
+            if (s.youtube) {
+                container.innerHTML += `<a href="${s.youtube.startsWith('http') ? s.youtube : 'https://youtube.com/' + s.youtube}" target="_blank" class="w-6 h-6 rounded-full bg-white/20 backdrop-blur text-current flex items-center justify-center text-[10px] shadow-sm"><i class="fa-brands fa-youtube"></i></a>`;
+            }
+            if (s.email) {
+                container.innerHTML += `<a href="mailto:${s.email}" class="w-6 h-6 rounded-full bg-white/20 backdrop-blur text-current flex items-center justify-center text-[10px] shadow-sm"><i class="fa-regular fa-envelope"></i></a>`;
+            }
+        }
+
+        function renderItemCard(item) {
+            const isActive = item.active !== false;
+            return `
+                <div class="nested-item bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex flex-col gap-2.5 transition" data-item-id="${item.id}">
+                    <div class="flex items-center justify-between gap-3">
+                        <div class="flex items-center gap-2 flex-1">
+                            <span class="drag-handle-item text-gray-300 hover:text-gray-500 px-1 py-0.5 text-xs">
+                                <i class="fa-solid fa-grip-vertical"></i>
+                            </span>
+                            <div class="flex items-center gap-1.5 flex-1 min-w-0">
+                                <input type="text" onchange="updateItemTitle('${item.id}', this.value)" value="${item.title}" class="font-bold text-xs text-neutral-800 border-b border-transparent hover:border-gray-200 focus:border-black focus:outline-none bg-transparent w-full truncate">
+                                <i class="fa-solid fa-pen text-[10px] text-gray-400"></i>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-2.5 flex-shrink-0">
+                            <i class="fa-solid fa-arrow-up-from-bracket text-gray-400 text-xs"></i>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" onchange="toggleItemActive('${item.id}')" ${isActive ? 'checked' : ''} class="sr-only peer">
+                                <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-500"></div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-1.5 pl-6">
+                        <input type="text" onchange="updateItemUrl('${item.id}', this.value)" value="${item.url}" class="text-[11px] text-gray-400 border-b border-transparent hover:border-gray-200 focus:border-black focus:outline-none bg-transparent w-full truncate">
+                        <i class="fa-solid fa-pen text-[9px] text-gray-400"></i>
+                    </div>
+
+                    <div class="flex items-center justify-between pt-1 text-gray-400 text-xs pl-6 border-t border-gray-50 mt-1">
+                        <div class="flex items-center gap-3 text-[11px]">
+                            <i class="fa-regular fa-image hover:text-gray-600 cursor-pointer"></i>
+                            <i class="fa-regular fa-star hover:text-gray-600 cursor-pointer"></i>
+                            <i class="fa-solid fa-code-branch hover:text-gray-600 cursor-pointer"></i>
+                            <i class="fa-regular fa-calendar hover:text-gray-600 cursor-pointer"></i>
+                            <i class="fa-solid fa-lock hover:text-gray-600 cursor-pointer"></i>
+                            <span class="text-[10px] text-emerald-600 font-medium ml-1">
+                                <i class="fa-solid fa-arrow-trend-up mr-0.5"></i> ${item.clicks || 0} clicks
+                            </span>
+                        </div>
+                        <button onclick="deleteItem('${item.id}')" class="hover:text-red-500 transition text-xs">
+                            <i class="fa-regular fa-trash-can"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderEditor() {
+            const container = document.getElementById('sections-container');
+            container.innerHTML = '';
+
+            sections.forEach(sec => {
+                if (sec.type === 'group') {
+                    const isGroupActive = sec.active !== false;
+                    const curLayout = sec.layout || 'stack';
+                    const isPanelOpen = openedLayoutPanels.has(sec.id);
+                    const isAddOpen = openedGroupAddForms.has(sec.id);
+                    const itemsHtml = (sec.items || []).map(item => renderItemCard(item)).join('');
+
+                    const layoutSettingsPanel = `
+                        <div class="bg-white rounded-3xl p-5 mb-3 border border-gray-200/80 shadow-sm space-y-4 ${isPanelOpen ? '' : 'hidden'}" id="layout-panel-${sec.id}">
+                            <h5 class="text-sm font-bold text-neutral-900">Display as</h5>
+
+                            <div class="grid grid-cols-4 gap-3">
+                                <div onclick="selectGroupLayout('${sec.id}', 'stack')" class="flex flex-col items-center gap-2 cursor-pointer group">
+                                    <div class="w-16 h-16 rounded-2xl flex items-center justify-center transition ${curLayout === 'stack' ? 'border-2 border-black bg-white shadow-sm' : 'bg-gray-100 hover:bg-gray-200'}">
+                                        <div class="flex flex-col gap-1 w-6">
+                                            <div class="h-2 w-full border border-current rounded-[3px]"></div>
+                                            <div class="h-2 w-full border border-current rounded-[3px]"></div>
+                                        </div>
+                                    </div>
+                                    <span class="text-xs font-semibold ${curLayout === 'stack' ? 'text-black font-bold' : 'text-gray-500'}">Stack</span>
+                                </div>
+
+                                <div onclick="selectGroupLayout('${sec.id}', 'grid')" class="flex flex-col items-center gap-2 cursor-pointer group">
+                                    <div class="w-16 h-16 rounded-2xl flex items-center justify-center transition ${curLayout === 'grid' ? 'border-2 border-black bg-white shadow-sm' : 'bg-gray-100 hover:bg-gray-200'}">
+                                        <div class="grid grid-cols-2 gap-1 w-6">
+                                            <div class="h-2 w-2 border border-current rounded-[2px]"></div>
+                                            <div class="h-2 w-2 border border-current rounded-[2px]"></div>
+                                            <div class="h-2 w-2 border border-current rounded-[2px]"></div>
+                                            <div class="h-2 w-2 border border-current rounded-[2px]"></div>
+                                        </div>
+                                    </div>
+                                    <span class="text-xs font-semibold ${curLayout === 'grid' ? 'text-black font-bold' : 'text-gray-500'}">Grid</span>
+                                </div>
+
+                                <div onclick="selectGroupLayout('${sec.id}', 'carousel')" class="flex flex-col items-center gap-2 cursor-pointer group">
+                                    <div class="w-16 h-16 rounded-2xl flex items-center justify-center transition ${curLayout === 'carousel' ? 'border-2 border-black bg-white shadow-sm' : 'bg-gray-100 hover:bg-gray-200'}">
+                                        <div class="flex items-center gap-1 w-7">
+                                            <div class="h-4 w-1 bg-current opacity-40 rounded-[1px]"></div>
+                                            <div class="h-5 w-4 border border-current rounded-[3px]"></div>
+                                            <div class="h-4 w-1 bg-current opacity-40 rounded-[1px]"></div>
+                                        </div>
+                                    </div>
+                                    <span class="text-xs font-semibold ${curLayout === 'carousel' ? 'text-black font-bold' : 'text-gray-500'}">Carousel</span>
+                                </div>
+
+                                <div onclick="selectGroupLayout('${sec.id}', 'showcase')" class="flex flex-col items-center gap-2 cursor-pointer group">
+                                    <div class="w-16 h-16 rounded-2xl flex items-center justify-center transition ${curLayout === 'showcase' ? 'border-2 border-black bg-white shadow-sm' : 'bg-gray-100 hover:bg-gray-200'}">
+                                        <div class="w-6 h-5 border border-current rounded-[3px] flex items-center justify-center">
+                                            <i class="fa-regular fa-clone text-[10px]"></i>
+                                        </div>
+                                    </div>
+                                    <span class="text-xs font-semibold ${curLayout === 'showcase' ? 'text-black font-bold' : 'text-gray-500'}">Showcase</span>
+                                </div>
+                            </div>
+
+                            <p class="text-xs text-gray-500 pt-2 border-t border-gray-100">${LAYOUT_DESCRIPTIONS[curLayout] || LAYOUT_DESCRIPTIONS.stack}</p>
+                        </div>
+                    `;
+
+                    const addLinkInlineForm = `
+                        <div class="bg-white rounded-2xl p-4 border border-gray-200 shadow-sm space-y-3 ${isAddOpen ? '' : 'hidden'}" id="add-link-box-${sec.id}">
+                            <div class="flex items-center justify-between pb-1 border-b border-gray-100">
+                                <span class="font-bold text-[11px] text-gray-500 uppercase tracking-wider">Thêm liên kết vào "${sec.title}"</span>
+                                <button onclick="toggleGroupAddForm('${sec.id}')" class="text-gray-400 hover:text-gray-600 text-xs">
+                                    <i class="fa-solid fa-xmark"></i>
+                                </button>
+                            </div>
+                            <input type="text" id="input-title-${sec.id}" placeholder="Tiêu đề link" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs focus:outline-none focus:border-black">
+                            <input type="text" id="input-url-${sec.id}" placeholder="URL" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs focus:outline-none focus:border-black">
+                            <div class="flex gap-2 pt-1">
+                                <button onclick="saveLinkInsideGroup('${sec.id}')" class="flex-1 bg-black hover:bg-neutral-800 text-white py-2 rounded-xl text-xs font-bold transition shadow-sm">Thêm vào nhóm</button>
+                                <button onclick="toggleGroupAddForm('${sec.id}')" class="px-3 bg-gray-100 hover:bg-gray-200 text-gray-600 py-2 rounded-xl text-xs font-semibold transition">Hủy</button>
+                            </div>
+                        </div>
+                    `;
+
+                    container.innerHTML += `
+                        <div class="section-item-wrapper section-group-box bg-[#eaeaea]/85 rounded-[32px] p-4 space-y-3 transition" data-section-id="${sec.id}" data-section-type="group">
+                            <div class="flex items-center justify-between px-2 pt-1">
+                                <div class="flex items-center gap-2">
+                                    <span class="drag-handle-group text-gray-400 hover:text-gray-600 p-1 text-sm">
+                                        <i class="fa-solid fa-grip-vertical"></i>
+                                    </span>
+                                    <button onclick="toggleLayoutPanel('${sec.id}')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold text-xs text-white shadow-sm transition ${isPanelOpen ? 'bg-purple-700 ring-2 ring-purple-300' : 'bg-[#7c3aed] hover:bg-purple-700'}">
+                                        <i class="fa-solid fa-bars-staggered text-[11px]"></i> Layout
+                                    </button>
+                                </div>
+
+                                <div class="flex items-center gap-1.5 flex-1 max-w-[200px] justify-center">
+                                    <input type="text" onchange="updateGroupTitle('${sec.id}', this.value)" value="${sec.title}" class="font-bold text-center text-xs border-b border-transparent hover:border-gray-300 focus:border-black focus:outline-none bg-transparent w-full">
+                                    <i class="fa-solid fa-pen text-[10px] text-gray-400"></i>
+                                </div>
+
+                                <div class="flex items-center gap-2.5">
+                                    <button onclick="toggleGroupAddForm('${sec.id}')" title="Thêm liên kết vào nhóm" class="w-7 h-7 rounded-full bg-white hover:bg-gray-100 flex items-center justify-center text-gray-700 transition shadow-sm text-xs">
+                                        <i class="fa-solid fa-plus"></i>
+                                    </button>
+                                    <button onclick="deleteSection('${sec.id}')" title="Xóa nhóm" class="text-gray-400 hover:text-red-500 transition text-xs">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" onchange="toggleGroupActive('${sec.id}')" ${isGroupActive ? 'checked' : ''} class="sr-only peer">
+                                        <div class="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-500"></div>
+                                    </label>
+                                </div>
+                            </div>
+
+                            ${layoutSettingsPanel}
+                            ${addLinkInlineForm}
+
+                            <div class="nested-dropzone space-y-3 p-2 rounded-2xl bg-white/40 border border-dashed border-gray-300/80 transition" data-group-id="${sec.id}">
+                                ${itemsHtml}
+                                ${sec.items && sec.items.length === 0 ? `
+                                    <div class="empty-hint text-center py-5 text-gray-400 text-xs">
+                                        Kéo thả liên kết vào đây hoặc bấm "Add link" bên dưới
+                                    </div>
+                                ` : ''}
+                            </div>
+
+                            <div class="pt-1">
+                                <button onclick="toggleGroupAddForm('${sec.id}')" class="w-full py-2.5 px-4 bg-white hover:bg-gray-50 border border-gray-200 rounded-2xl font-bold text-xs text-neutral-700 shadow-sm transition flex items-center justify-center gap-2">
+                                    <i class="fa-solid fa-plus text-[10px]"></i> Add link
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                } else if (sec.type === 'link') {
+                    container.innerHTML += `
+                        <div class="section-item-wrapper standalone-container relative group/wrap" data-section-id="${sec.id}" data-section-type="link">
+                            <div class="nested-dropzone min-h-[auto]" data-standalone-id="${sec.id}">
+                                ${renderItemCard(sec.item)}
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+        }
+
+        window.toggleLayoutPanel = (groupId) => {
+            if (openedLayoutPanels.has(groupId)) {
+                openedLayoutPanels.delete(groupId);
+            } else {
+                openedLayoutPanels.add(groupId);
+            }
+            renderEditor();
+            initSortable();
+        };
+
+        window.toggleGroupAddForm = (groupId) => {
+            if (openedGroupAddForms.has(groupId)) {
+                openedGroupAddForms.delete(groupId);
+            } else {
+                openedGroupAddForms.add(groupId);
+            }
+            renderEditor();
+            initSortable();
+
+            if (openedGroupAddForms.has(groupId)) {
+                setTimeout(() => {
+                    const inputEl = document.getElementById(`input-title-${groupId}`);
+                    if (inputEl) inputEl.focus();
+                }, 50);
+            }
+        };
+
+        window.saveLinkInsideGroup = async (groupId) => {
+            const titleEl = document.getElementById(`input-title-${groupId}`);
+            const urlEl = document.getElementById(`input-url-${groupId}`);
+
+            const title = titleEl ? titleEl.value.trim() : '';
+            const url = urlEl ? urlEl.value.trim() : '';
+
+            if (!title || !url) {
+                alert("Vui lòng nhập đầy đủ tiêu đề và URL!");
+                return;
+            }
+
+            const grp = sections.find(s => s.id === groupId);
+            if (grp && grp.items) {
+                grp.items.push({
+                    id: 'item_' + Math.random().toString(36).substr(2, 9),
+                    title,
+                    url,
+                    active: true,
+                    clicks: 0
+                });
+                openedGroupAddForms.delete(groupId);
+                await syncFirebase();
+            }
+        };
+
+        window.selectGroupLayout = async (groupId, layoutName) => {
+            const group = sections.find(s => s.id === groupId);
+            if (group) {
+                group.layout = layoutName;
+                await syncFirebase(false);
+                renderEditor();
+                renderPreview();
+                initSortable();
+            }
+        };
+
+        function initSortable() {
+            const rootEl = document.getElementById('sections-container');
+            if (rootSortable) rootSortable.destroy();
+            nestedSortables.forEach(s => s.destroy());
+            nestedSortables = [];
+
+            rootSortable = new Sortable(rootEl, {
+                handle: '.drag-handle-group',
+                draggable: '.section-group-box',
+                animation: 180,
+                ghostClass: 'sortable-ghost',
+                onEnd: parseCurrentDOMAndSync
+            });
+
+            const dropzones = document.querySelectorAll('.nested-dropzone');
+            dropzones.forEach(zone => {
+                const s = new Sortable(zone, {
+                    group: { name: 'shared-links', pull: true, put: true },
+                    handle: '.drag-handle-item',
+                    draggable: '.nested-item',
+                    animation: 180,
+                    fallbackOnBody: true,
+                    swapThreshold: 0.65,
+                    ghostClass: 'sortable-ghost',
+                    onEnd: parseCurrentDOMAndSync
+                });
+                nestedSortables.push(s);
+            });
+        }
+
+        async function parseCurrentDOMAndSync() {
+            const newSections = [];
+            const itemMap = new Map();
+
+            sections.forEach(s => {
+                if (s.type === 'group') {
+                    (s.items || []).forEach(it => itemMap.set(it.id, it));
+                } else if (s.type === 'link') {
+                    itemMap.set(s.item.id, s.item);
+                }
+            });
+
+            const wrappers = document.getElementById('sections-container').children;
+            for (let wrap of wrappers) {
+                const type = wrap.getAttribute('data-section-type');
+                const secId = wrap.getAttribute('data-section-id');
+
+                if (type === 'group') {
+                    const originalGroup = sections.find(s => s.id === secId) || { id: secId, title: 'Nhóm', active: true, layout: 'stack' };
+                    const groupItems = [];
+                    const itemCards = wrap.querySelectorAll('.nested-dropzone .nested-item');
+                    itemCards.forEach(card => {
+                        const itId = card.getAttribute('data-item-id');
+                        if (itemMap.has(itId)) {
+                            groupItems.push(itemMap.get(itId));
+                        }
+                    });
+
+                    newSections.push({
+                        id: originalGroup.id,
+                        type: 'group',
+                        title: originalGroup.title || 'Nhóm',
+                        layout: originalGroup.layout || 'stack',
+                        active: originalGroup.active !== false,
+                        items: groupItems
+                    });
+                } else if (type === 'link') {
+                    const itemCards = wrap.querySelectorAll('.nested-dropzone .nested-item');
+                    itemCards.forEach(card => {
+                        const itId = card.getAttribute('data-item-id');
+                        if (itemMap.has(itId)) {
+                            newSections.push({
+                                id: 'sec_' + Math.random().toString(36).substr(2, 9),
+                                type: 'link',
+                                item: itemMap.get(itId)
+                            });
+                        }
+                    });
+                }
+            }
+
+            sections = newSections;
+            await syncFirebase(false);
+            renderPreview();
+        }
+
+        // Render Preview màn hình điện thoại theo Theme
+        function renderPreview() {
+            const container = document.getElementById('preview-sections');
+            const phoneScreen = document.getElementById('phone-preview-screen');
+            const theme = THEMES[currentThemeId] || THEMES.air;
+
+            // Đổi background & text màn hình preview
+            phoneScreen.className = `w-full h-full rounded-[30px] overflow-y-auto p-4 flex flex-col items-center pt-8 relative no-scrollbar transition duration-300 ${theme.bodyBg} ${theme.textColor}`;
+
+            container.innerHTML = '';
+
+            sections.forEach(sec => {
+                if (sec.type === 'group' && sec.active !== false) {
+                    const activeItems = (sec.items || []).filter(item => item.active !== false);
+                    if (activeItems.length === 0) return;
+
+                    const layout = sec.layout || 'stack';
+                    let itemsContent = '';
+
+                    if (layout === 'grid') {
+                        itemsContent = `
+                            <div class="grid grid-cols-2 gap-2">
+                                ${activeItems.map(link => `
+                                    <div class="p-3 rounded-2xl shadow-sm flex flex-col items-center text-center justify-center min-h-[64px] ${theme.linkCard}">
+                                        <span class="font-bold text-[11px] truncate w-full ${theme.cardText}">${link.title}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        `;
+                    } else if (layout === 'carousel') {
+                        itemsContent = `
+                            <div class="flex gap-2 overflow-x-auto no-scrollbar py-1">
+                                ${activeItems.map(link => `
+                                    <div class="flex-shrink-0 w-36 py-3 px-3 rounded-2xl shadow-sm text-center font-bold text-[11px] truncate ${theme.linkCard}">
+                                        <span class="truncate block ${theme.cardText}">${link.title}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        `;
+                    } else if (layout === 'showcase') {
+                        itemsContent = `
+                            <div class="space-y-2">
+                                ${activeItems.map(link => `
+                                    <div class="p-4 rounded-2xl shadow-sm flex items-center justify-between border ${theme.linkCard}">
+                                        <div class="truncate pr-2">
+                                            <div class="font-extrabold text-xs truncate ${theme.cardText}">${link.title}</div>
+                                            <div class="text-[9px] opacity-75 truncate">${link.url}</div>
+                                        </div>
+                                        <i class="fa-solid fa-arrow-up-right-from-square text-xs opacity-75"></i>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        `;
+                    } else {
+                        itemsContent = `
+                            <div class="space-y-2">
+                                ${activeItems.map(link => `
+                                    <div class="w-full py-2.5 px-3 rounded-xl shadow-sm flex items-center justify-between text-xs font-semibold ${theme.linkCard}">
+                                        <span class="flex-1 text-center truncate pl-4 ${theme.cardText}">${link.title}</span>
+                                        <span class="opacity-50 text-xs">&#8942;</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        `;
+                    }
+
+                    container.innerHTML += `
+                        <div class="w-full space-y-2">
+                            <div class="text-[11px] font-bold text-center tracking-wide uppercase ${theme.groupHeader}">${sec.title}</div>
+                            ${itemsContent}
+                        </div>
+                    `;
+                } else if (sec.type === 'link' && sec.item && sec.item.active !== false) {
+                    container.innerHTML += `
+                        <div class="w-full py-2.5 px-3 rounded-xl shadow-sm flex items-center justify-between text-xs font-semibold ${theme.linkCard}">
+                            <span class="flex-1 text-center truncate pl-4 ${theme.cardText}">${sec.item.title}</span>
+                            <span class="opacity-50 text-xs">&#8942;</span>
+                        </div>
+                    `;
+                }
+            });
+        }
+
+        window.toggleAddForm = (type) => {
+            currentAddType = type;
+            const form = document.getElementById('add-form');
+            const titleEl = document.getElementById('form-type-title');
+            const fieldsEl = document.getElementById('form-fields');
+
+            if (type === 'group') {
+                titleEl.innerText = "Tạo Nhóm / Layout Mới";
+                fieldsEl.innerHTML = `
+                    <input type="text" id="new-group-name" placeholder="Tên nhóm" class="w-full p-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-black">
+                `;
+            } else {
+                titleEl.innerText = "Thêm Liên Kết Độc Lập Bên Ngoài";
+                fieldsEl.innerHTML = `
+                    <input type="text" id="new-item-title" placeholder="Tiêu đề link (VD: 3105 - Cr: YangJi)" class="w-full p-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-black">
+                    <input type="text" id="new-item-url" placeholder="URL" class="w-full p-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-black">
+                `;
+            }
+            form.classList.remove('hidden');
+        };
+
+        window.submitNewItem = async () => {
+            if (currentAddType === 'group') {
+                const title = document.getElementById('new-group-name').value.trim();
+                if (title) {
+                    sections.push({
+                        id: 'grp_' + Math.random().toString(36).substr(2, 9),
+                        type: 'group',
+                        title,
+                        layout: 'stack',
+                        active: true,
+                        items: []
+                    });
+                }
+            } else {
+                const title = document.getElementById('new-item-title').value.trim();
+                const url = document.getElementById('new-item-url').value.trim();
+                if (title && url) {
+                    sections.push({
+                        id: 'sec_' + Math.random().toString(36).substr(2, 9),
+                        type: 'link',
+                        item: {
+                            id: 'item_' + Math.random().toString(36).substr(2, 9),
+                            title,
+                            url,
+                            active: true,
+                            clicks: 0
+                        }
+                    });
+                }
+            }
+            document.getElementById('add-form').classList.add('hidden');
+            await syncFirebase();
+        };
+
+        window.updateGroupTitle = async (grpId, val) => {
+            const g = sections.find(s => s.id === grpId);
+            if (g) { g.title = val; await syncFirebase(false); renderPreview(); }
+        };
+
+        window.toggleGroupActive = async (grpId) => {
+            const g = sections.find(s => s.id === grpId);
+            if (g) { g.active = !(g.active !== false); await syncFirebase(false); renderPreview(); }
+        };
+
+        window.deleteSection = async (secId) => {
+            if (!confirm("Bạn có chắc muốn xóa layout này?")) return;
+            sections = sections.filter(s => s.id !== secId);
+            openedLayoutPanels.delete(secId);
+            openedGroupAddForms.delete(secId);
+            await syncFirebase();
+        };
+
+        window.updateItemTitle = async (itemId, val) => {
+            findAndApplyItem(itemId, item => item.title = val);
+            await syncFirebase(false);
+            renderPreview();
+        };
+
+        window.updateItemUrl = async (itemId, val) => {
+            findAndApplyItem(itemId, item => item.url = val);
+            await syncFirebase(false);
+            renderPreview();
+        };
+
+        window.toggleItemActive = async (itemId) => {
+            findAndApplyItem(itemId, item => item.active = !(item.active !== false));
+            await syncFirebase(false);
+            renderPreview();
+        };
+
+        window.deleteItem = async (itemId) => {
+            sections.forEach(s => {
+                if (s.type === 'group' && s.items) {
+                    s.items = s.items.filter(it => it.id !== itemId);
+                }
+            });
+            sections = sections.filter(s => !(s.type === 'link' && s.item.id === itemId));
+            await syncFirebase();
+        };
+
+        function findAndApplyItem(itemId, callback) {
+            sections.forEach(s => {
+                if (s.type === 'group' && s.items) {
+                    const it = s.items.find(i => i.id === itemId);
+                    if (it) callback(it);
+                } else if (s.type === 'link' && s.item.id === itemId) {
+                    callback(s.item);
+                }
+            });
+        }
+
+        async function syncFirebase(reRender = true) {
+            profileData.sections = sections;
+            profileData.theme = currentThemeId;
+            await setDoc(docRef, profileData);
+            if (reRender) {
+                renderEditor();
+                renderPreview();
+                initSortable();
+            }
+        }
+    </script>
+</body>
+
+</html>
