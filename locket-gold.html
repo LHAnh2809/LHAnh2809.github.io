@@ -318,20 +318,49 @@ $('fApp').addEventListener('change', async e => {
     status(''); ready();
   } catch (err) { status('File lỗi, chọn lại file khác.', 'err', 'err'); }
 });
+// Sự kiện tạo file patch
 $('btnGo').addEventListener('click', async () => {
-  $('btnDl').style.display = 'none'; outBlob = null;
+  $('btnDl').style.display = 'none'; 
+  outBlob = null;
   const btn = $('btnGo');
   btn.disabled = true;
+
   try {
     $('status').innerHTML = '<span class="spin"></span>Đang tạo patch, chờ xíu...';
-    await new Promise(r => setTimeout(r, 30));
+    await new Promise(r => setTimeout(r, 50));
+    
+    // Gọi hàm xử lý từ file 3105.js
     const { pkg, rules } = await forgeFromEtagsFile(etagsBytes, appBytes);
     outBlob = new Blob([pkg], { type: 'application/octet-stream' });
+    
     status(`Xong! Patch ${rules} rules.`, 'ok', 'ok');
-    $('btnDl').style.display = 'block';
-  } catch (err) { status('Lỗi: ' + esc(err.message), 'err', 'err'); }
+    $('btnDl').style.display = 'block'; // Hiện nút tải sau khi tạo xong
+  } catch (err) { 
+    status('Lỗi: ' + esc(err.message), 'err', 'err'); 
+  }
+
   btn.disabled = false;
   ready();
+});
+
+// Sự kiện bấm nút tải xuống
+$('btnDl').addEventListener('click', () => {
+  if (!outBlob) {
+    alert('Chưa có file để tải, hãy bấm Tạo file trước!');
+    return;
+  }
+  
+  const url = URL.createObjectURL(outBlob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'bLocket.3105';
+  document.body.appendChild(a);
+  a.click();
+  
+  setTimeout(() => {
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }, 1000);
 });
 $('btnDonate').addEventListener('click', () => {
   const wrap = $('donateWrap');
